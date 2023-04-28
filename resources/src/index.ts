@@ -1,6 +1,6 @@
 import { Library, Runtime, Inspector } from "@observablehq/runtime";
 import { Workunit, Result } from "@hpcc-js/comms";
-import { compile } from "@hpcc-js/observablehq-compiler";
+import { compile, ohq } from "@hpcc-js/observablehq-compiler";
 import { scopedLogger } from "@hpcc-js/util";
 
 import "@hpcc-js/observablehq-compiler/dist/index.esm.css";
@@ -92,16 +92,19 @@ export async function compileViz(): Promise<any> {
 
     const placeholder = document.getElementById("placeholder")!;
 
-    const nb = await fetch("./index.eclnb").then(r => r.json());
+    const nb = await fetch("./index.eclnb").then(r => r.json()) as ohq.Notebook;
     nb.nodes = nb.nodes.filter(node => node.mode !== "ecl");
+    const nodes = new Map(nb.nodes.map(node => [node.id, node]));
 
     const compiledNB = await compile(nb);
 
     const runtime = new Runtime(Object.assign(new Library, main.globals()));
-    compiledNB(runtime, _name => {
+    compiledNB(runtime, (_name, id: string) => {
         const div = document.createElement("div");
         placeholder.appendChild(div);
-
+        if (nodes.get(id)?.hidden === true) {
+            div.style.display = "none";
+        }
         return new Inspector(div);
     });
 }

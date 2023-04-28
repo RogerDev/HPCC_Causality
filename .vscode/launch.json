@@ -8,7 +8,7 @@
             "name": "Launch Edge",
             "request": "launch",
             "type": "msedge",
-            "url": "http://localhost:8000/res/index.html?W20230318-080858",
+            "url": "http://localhost:8000/res/index.html?W20230428-074159",
             "runtimeArgs": [
                 "--allow-file-access-from-files",
                 "--disable-web-security"
